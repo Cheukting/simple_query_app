@@ -6,10 +6,9 @@ import pandas as pd
 
 import sys
 import os
-# patching for the app path
+# patching for the app path, include the parient directory
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from app import app
-#from simple_query_app.util import *
 
 def test_read_csv_fail():
     runner = CliRunner()
@@ -43,7 +42,7 @@ def test_search_no_match(mocker):
     result = runner.invoke(app.search, ['firstname','John'])
     assert result.exit_code == 0
     assert result.output.split('\n')[0] == f"Searching for user with 'firstname' as 'John'..."
-    assert result.output.split('\n')[1] == '2 matche(s) found:'
+    assert result.output.split('\n')[1] == 'No matches found.'
 
 def test_search_success(mocker):
     result_df = pd.DataFrame({'firstname':['John','John'],
@@ -56,15 +55,3 @@ def test_search_success(mocker):
     assert result.exit_code == 0
     assert result.output.split('\n')[0] == f"Searching for user with 'firstname' as 'John'..."
     assert result.output.split('\n')[1] == '2 matche(s) found:'
-
-
-#def test_hello_world():
-#    @click.command()
-#    @click.argument('name')
-#    def hello(name):
-#        click.echo('Hello %s!' % name)
-#
-#    runner = CliRunner()
-#    result = runner.invoke(hello, ['Peter'])
-#    assert result.exit_code == 0
-#    assert result.output == 'Hello Peter!\n'
