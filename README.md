@@ -4,6 +4,7 @@
 
 - Python >= 3.6
 - Unix environment (macOS/Linux)
+- Docker ([How to install Docker](https://docs.docker.com/install/))
 
 ## Installation
 
