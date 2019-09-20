@@ -6,9 +6,13 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'click==7.0',
+        'Click==7.0',
         'pandas==0.24.2',
         'pytest==5.1.2',
+        'pytest-mock==1.10.4',
+        'docker==4.0.2',
+        'SQLAlchemy==1.3.8',
+        'PyMySQL==0.9.3'
     ],
     entry_points='''
         [console_scripts]

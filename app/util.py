@@ -72,8 +72,8 @@ def load_file_to_db(file, engine):
     tables = engine.table_names()
     connection = engine.connect()
     if 'users' not in tables:
-        connection.execute("CREATE TABLE users (firstname VARCHAR(255), lastname VARCHAR(255), email VARCHAR(225))")
-                       #"CONSTRAINT username PRIMARY KEY (email)")
+        connection.execute("CREATE TABLE users (firstname VARCHAR(255), lastname VARCHAR(255), email VARCHAR(225),"
+                           "UNIQUE KEY unique_email (email))")
     sql = "INSERT INTO users (firstname, lastname, email) VALUES (%s, %s, %s)"
     for idx in range(file.shape[0]):
         row = file.iloc[idx]
