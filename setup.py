@@ -9,7 +9,6 @@ setup(
         'click==7.0',
         'pandas==0.24.2',
         'pytest==5.1.2',
-        'testcontainers[mysql]==2.5'
     ],
     entry_points='''
         [console_scripts]

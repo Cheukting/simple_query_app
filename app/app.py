@@ -3,9 +3,31 @@
 import click
 from .util import *
 
+COMPOSE_PATH = os.path.dirname(os.path.dirname(__file__)) #the folder containing docker-compose.yml
+
 @click.group()
 def cli():
     pass
+
+@cli.command()
+def init():
+    click.echo('Initializing database...')
+    status = spin_up_db()
+    if status:
+        click.echo('Database is running.')
+    else:
+        click.echo('Database cannot be initiated.')
+
+@cli.command()
+@click.option('-d', '--delete', is_flag=True, help='Delete the database when stop')
+def stop(delete):
+    click.echo('Stopping database...')
+    if delete:
+        delete_db()
+        click.echo('Database is deleted.')
+    else:
+        stop_db()
+        click.echo('Database is stopped. Start again by `init`.')
 
 @cli.command()
 @click.argument('file_name')
@@ -16,7 +38,7 @@ def load(file_name):
     except:
         click.echo('Abort. Incorrect file format.')
         return None
-    engine= connect_db()
+    engine = connect_db()
     load_file_to_db(file, engine)
     click.echo(f'{file.shape[0]} row(s) of data loaded.')
 
