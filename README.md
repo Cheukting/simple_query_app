@@ -1,5 +1,10 @@
 # A simple query app with a simple MySQL database that runs on Docker
 
+## Prerequisite
+
+- Python >= 3.6
+- Unix environment (macOS/Linux)
+
 ## Installation
 
 ### 1. Cloning the project
