@@ -9,6 +9,8 @@ def cli():
 
 @cli.command()
 def init():
+    """Command to start the database"""
+
     click.echo('Initializing database...')
     status = spin_up_db()
     if status:
@@ -19,6 +21,8 @@ def init():
 @cli.command()
 @click.option('-d', '--delete', is_flag=True, help='Delete the database when stop')
 def stop(delete):
+    """Command to stop the database, with the option to delete everything"""
+
     click.echo('Stopping database...')
     if delete:
         delete_db()
@@ -30,6 +34,8 @@ def stop(delete):
 @cli.command()
 @click.argument('file_name')
 def load(file_name):
+    """Command to load data in a csv to database"""
+
     click.echo('Loading data into database...')
     try:
         file = read_file(file_name)
@@ -44,6 +50,8 @@ def load(file_name):
 @click.argument('key')
 @click.argument('value')
 def search(key,value):
+    """Command to search for records with `value` for `key`"""
+
     click.echo(f"Searching for user with '{key}' as '{value}'...")
     engine = connect_db()
     result = look_up_from_db(key, value, engine)

@@ -25,7 +25,7 @@ def connect_db():
 
 def try_connection(max_try):
     """Try the connection for `max_try` number of times.
-       Return if the connection is successful"""
+    Return if the connection is successful"""
     try_count = 0
     while try_count < max_try:
         try:
@@ -37,21 +37,25 @@ def try_connection(max_try):
     return False
 
 def spin_up_db():
+    """State the docker container for the database.
+    Make sure it is running and connetable then return True, else False"""
     subprocess.call(["docker-compose", "up", "-d"], cwd=COMPOSE_PATH)
     time.sleep(10)
     return try_connection(10)
 
 def stop_db():
+    """Stop the database container without deleting the volumn"""
     subprocess.call(["docker-compose", "down"], cwd=COMPOSE_PATH)
     time.sleep(10)
 
 def delete_db():
+    """Stop the database container and delete the volumn"""
     subprocess.call(["docker-compose", "down", "-v"], cwd=COMPOSE_PATH)
     time.sleep(10)
 
 def read_file(file_name):
     """Given the path of a file, it will be loaded and returned as DataFrame
-       Duplicates of emails will be altomatically removed"""
+    Duplicates of emails will be altomatically removed"""
 
     header = ['firstname','lastname','email']
     file = pd.read_csv(file_name,
@@ -63,7 +67,7 @@ def read_file(file_name):
 
 def load_file_to_db(file, engine):
     """Load the given DataFame into the data base using the engine
-       If table `users` does not exist, it will be created"""
+    If table `users` does not exist, it will be created"""
 
     tables = engine.table_names()
     connection = engine.connect()
@@ -78,7 +82,7 @@ def load_file_to_db(file, engine):
 
 def look_up_from_db(item, value, engine):
     """Query and return the data matching the given `value` in the `item` field
-       using the engine. Return as a DataFrame"""
+    using the engine. Return as a DataFrame"""
     try:
         query = f"SELECT * FROM users WHERE {item} = '{value}'"
         df = pd.read_sql(query, con=engine)
