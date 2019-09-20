@@ -7,7 +7,7 @@ import pytest
 import sys
 import os
 # patching for the app path, include the parient directory
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+#sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from app import util
 
 def test_read_csv_fail():

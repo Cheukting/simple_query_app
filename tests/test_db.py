@@ -4,7 +4,7 @@ import sys
 import pandas as pd
 
 # patching for the app path, include the parient directory
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+#sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from app import util
 
 def test_db_api(mocker):
