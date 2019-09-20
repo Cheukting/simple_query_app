@@ -7,7 +7,8 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from app import util
 
-def test_db_api():
+def test_db_api(mocker):
+    mocker.patch('app.util.COMPOSE_PATH', os.path.dirname(__file__))
     status = util.spin_up_db()
     assert status
     engine = util.connect_db()

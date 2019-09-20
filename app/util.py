@@ -41,7 +41,7 @@ def spin_up_db():
     Make sure it is running and connetable then return True, else False"""
     subprocess.call(["docker-compose", "up", "-d"], cwd=COMPOSE_PATH)
     time.sleep(10)
-    return try_connection(10)
+    return try_connection(20)
 
 def stop_db():
     """Stop the database container without deleting the volumn"""
