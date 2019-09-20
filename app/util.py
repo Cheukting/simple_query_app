@@ -13,7 +13,7 @@ CONFIG = {
     'database': 'production'
 }
 
-COMPOSE_PATH = os.path.dirname(os.path.dirname(__file__)) #the folder containing docker-compose.yml
+COMPOSE_PATH = os.path.dirname(__file__) #the folder containing docker-compose.yml
 
 def connect_db():
     """Connecting to the database and return the engine"""

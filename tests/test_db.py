@@ -28,5 +28,5 @@ def test_db_api():
                              'lastname':['Smith','Smith'],
                              'email':['john.smith@gmail.com','j.smith@gmail.com']},
                              columns = ['firstname','lastname','email'])
-    assert all(result == result_df) #it should still be the same
+    assert all(result == result_df) #it should still be the same result
     util.delete_db()
