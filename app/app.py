@@ -3,8 +3,6 @@
 import click
 from .util import *
 
-COMPOSE_PATH = os.path.dirname(os.path.dirname(__file__)) #the folder containing docker-compose.yml
-
 @click.group()
 def cli():
     pass

@@ -14,6 +14,38 @@ class MockConn:
     def close(self):
         pass
 
+def test_init_db_success(mocker):
+    mocker.patch('app.app.spin_up_db', autospec=True, return_value=True)
+    runner = CliRunner()
+    result = runner.invoke(app.init)
+    assert app.spin_up_db.call_count == 1
+    assert result.exit_code == 0
+    assert result.output == 'Initializing database...\nDatabase is running.\n'
+
+def test_init_db_fail(mocker):
+    mocker.patch('app.app.spin_up_db', autospec=True, return_value=False)
+    runner = CliRunner()
+    result = runner.invoke(app.init)
+    assert app.spin_up_db.call_count == 1
+    assert result.exit_code == 0
+    assert result.output == 'Initializing database...\nDatabase cannot be initiated.\n'
+
+def test_stop_db(mocker):
+    mocker.patch('app.app.stop_db', autospec=True)
+    runner = CliRunner()
+    result = runner.invoke(app.stop)
+    assert app.stop_db.call_count == 1
+    assert result.exit_code == 0
+    assert result.output == 'Stopping database...\nDatabase is stopped. Start again by `init`.\n'
+
+def test_delete_db(mocker):
+    mocker.patch('app.app.delete_db', autospec=True)
+    runner = CliRunner()
+    result = runner.invoke(app.stop, ['-d'])
+    assert app.delete_db.call_count == 1
+    assert result.exit_code == 0
+    assert result.output == 'Stopping database...\nDatabase is deleted.\n'
+
 def test_read_csv_fail():
     runner = CliRunner()
     with runner.isolated_filesystem():
