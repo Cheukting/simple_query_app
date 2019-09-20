@@ -4,7 +4,9 @@
 
 ### 1. Cloning the project
 First clone this repo form GitHub, assume you have git already:
-
+```
+$ git clone https://github.com/Cheukting/simple_query_app.git
+```
 
 ### 2. Setup virtual environment
 If you have your own virtual environment set up it's great. Otherwise, you can use virtualenv.
@@ -64,7 +66,7 @@ You can also search using email in similar manner:
 $ simple_query_app search email <email>
 ```
 
-After you have done, you may want to shut down the database. There are two ways of doing that. If you want to preserve your data, you can do:
+When you are done, you may want to shut down the database (so it does not runs at the background all the time). There are two ways of doing that. If you want to preserve your data, you can do:
 ```
 $ simple_query_app stop
 ```
