@@ -6,9 +6,10 @@ setup(
     py_modules=['app'],
     install_requires=[
         'click == 7.0',
-        'mysql-connector == 2.2.9',
+        #'mysql-connector == 2.2.9',
         'pandas == 0.24.2',
-        'pytest == 5.1.2'
+        'pytest == 5.1.2',
+        'testcontainers[mysql]'
     ],
     entry_points='''
         [console_scripts]

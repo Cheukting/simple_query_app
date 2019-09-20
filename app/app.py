@@ -20,7 +20,8 @@ def load(file_name):
     ## TODO: imprement loading csv by chunk for really big file
     ## TODO: check inout format (e.g. email is a valid email)
 
-    load_file_to_db(file)
+    engine= connect_db()
+    load_file_to_db(file, engine)
     click.echo(f'{file.shape[0]} row(s) of data loaded.')
 
 @cli.command()
@@ -28,7 +29,8 @@ def load(file_name):
 @click.argument('value')
 def search(key,value):
     click.echo(f"Searching for user with '{key}' as '{value}'...")
-    result = look_up_from_db(key, value)
+    engine = connect_db()
+    result = look_up_from_db(key, value, engine)
     if result is None or result.shape[0] == 0:
         click.echo('No matches found.')
     else:
