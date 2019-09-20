@@ -40,6 +40,17 @@ def test_read_csv_success(mocker):
         assert result.exit_code == 0
         assert result.output == 'Loading data into database...\n2 row(s) of data loaded.\n'
 
+def test_search_fail(mocker):
+    mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
+    result_df = None
+    mocker.patch('app.app.look_up_from_db', return_value=result_df)
+    runner = CliRunner()
+    result = runner.invoke(app.search, ['firstname','John'])
+    assert app.connect_db.call_count == 1
+    assert result.exit_code == 0
+    assert result.output.split('\n')[0] == f"Searching for user with 'firstname' as 'John'..."
+    assert result.output.split('\n')[1] == 'No matches found.'
+
 def test_search_no_match(mocker):
     mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
     result_df = pd.DataFrame()

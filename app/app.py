@@ -16,10 +16,6 @@ def load(file_name):
     except:
         click.echo('Abort. Incorrect file format.')
         return None
-
-    ## TODO: imprement loading csv by chunk for really big file
-    ## TODO: check inout format (e.g. email is a valid email)
-
     engine= connect_db()
     load_file_to_db(file, engine)
     click.echo(f'{file.shape[0]} row(s) of data loaded.')
