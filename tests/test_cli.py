@@ -56,9 +56,9 @@ def test_read_csv_fail():
         assert result.exit_code == 0
         assert result.output == 'Loading data into database...\nAbort. Incorrect file format.\n'
 
-def test_read_csv_success(mocker):
+def test_load_csv_success(mocker):
     mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
-    mocker.patch('app.app.load_file_to_db', autospec=True)
+    mocker.patch('app.app.load_file_to_db', autospec=True, return_value=[])
     runner = CliRunner()
     with runner.isolated_filesystem():
         with open('success_example.csv', 'w') as f:
@@ -71,6 +71,24 @@ def test_read_csv_success(mocker):
         assert app.load_file_to_db.call_count == 1
         assert result.exit_code == 0
         assert result.output == 'Loading data into database...\n2 row(s) of data loaded.\n'
+
+def test_load_csv_duplicate(mocker):
+    mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
+    mocker.patch('app.app.load_file_to_db', autospec=True, return_value=[0])
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        with open('success_example.csv', 'w') as f:
+            f.write('firstname,lastname,email\n'
+                    'John,Smith,john.smith@gmail.com\n'
+                    'Ada,Wong,a.wong@gmail.com\n')
+
+        result = runner.invoke(app.load, ['success_example.csv'])
+        assert app.connect_db.call_count == 1
+        assert app.load_file_to_db.call_count == 1
+        assert result.exit_code == 0
+        assert result.output.split('\n')[0] == 'Loading data into database...'
+        assert result.output.split('\n')[1] == 'The following already exist in database:'
+        assert result.output.split('\n')[-2] == '1 row(s) of data loaded.'
 
 def test_search_fail(mocker):
     mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())

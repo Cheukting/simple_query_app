@@ -21,5 +21,12 @@ def test_db_api():
                              'lastname':['Smith','Smith'],
                              'email':['john.smith@gmail.com','j.smith@gmail.com']},
                              columns = ['firstname','lastname','email'])
-    util.delete_db()
     assert all(result == result_df)
+    util.load_file_to_db(file, engine) #load duplicates
+    result = util.look_up_from_db('firstname', 'John', engine)
+    result_df = pd.DataFrame({'firstname':['John','John'],
+                             'lastname':['Smith','Smith'],
+                             'email':['john.smith@gmail.com','j.smith@gmail.com']},
+                             columns = ['firstname','lastname','email'])
+    assert all(result == result_df) #it should still be the same
+    util.delete_db()

@@ -43,8 +43,13 @@ def load(file_name):
         click.echo('Abort. Incorrect file format.')
         return None
     engine = connect_db()
-    load_file_to_db(file, engine)
-    click.echo(f'{file.shape[0]} row(s) of data loaded.')
+    not_loaded = load_file_to_db(file, engine)
+    if len(not_loaded) == 0:
+        click.echo(f'{file.shape[0]} row(s) of data loaded.')
+    else:
+        click.echo(f'The following already exist in database:')
+        click.echo(file.iloc[not_loaded])
+        click.echo(f'{file.shape[0]-len(not_loaded)} row(s) of data loaded.')
 
 @cli.command()
 @click.argument('key')

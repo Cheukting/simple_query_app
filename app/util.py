@@ -75,10 +75,15 @@ def load_file_to_db(file, engine):
         connection.execute("CREATE TABLE users (firstname VARCHAR(255), lastname VARCHAR(255), email VARCHAR(225),"
                            "UNIQUE KEY unique_email (email))")
     sql = "INSERT INTO users (firstname, lastname, email) VALUES (%s, %s, %s)"
+    duplicate_idx = []
     for idx in range(file.shape[0]):
         row = file.iloc[idx]
-        connection.execute(sql, [row.firstname, row.lastname, row.email])
+        try:
+            connection.execute(sql, [row.firstname, row.lastname, row.email])
+        except:
+            duplicate_idx.append(idx)
     connection.close()
+    return duplicate_idx
 
 def look_up_from_db(item, value, engine):
     """Query and return the data matching the given `value` in the `item` field
