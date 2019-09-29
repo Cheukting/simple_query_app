@@ -1,14 +1,8 @@
 #!/usr/bin/env python
-import click
 from click.testing import CliRunner
-import unittest.mock as mock
 import pandas as pd
 
 from app import app
-
-class MockConn:
-    def close(self):
-        pass
 
 def test_init_db_success(mocker):
     mocker.patch('app.app.spin_up_db', autospec=True, return_value=True)
@@ -53,7 +47,7 @@ def test_read_csv_fail():
         assert result.output == 'Loading data into database...\nAbort. Incorrect file format.\n'
 
 def test_load_csv_success(mocker):
-    mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
+    mocker.patch('app.app.connect_db', autospec=True)
     mocker.patch('app.app.load_file_to_db', autospec=True, return_value=[])
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -69,7 +63,7 @@ def test_load_csv_success(mocker):
         assert result.output == 'Loading data into database...\n2 row(s) of data loaded.\n'
 
 def test_load_csv_duplicate(mocker):
-    mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
+    mocker.patch('app.app.connect_db', autospec=True)
     mocker.patch('app.app.load_file_to_db', autospec=True, return_value=[0])
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -87,7 +81,7 @@ def test_load_csv_duplicate(mocker):
         assert result.output.split('\n')[-2] == '1 row(s) of data loaded.'
 
 def test_search_fail(mocker):
-    mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
+    mocker.patch('app.app.connect_db', autospec=True)
     result_df = None
     mocker.patch('app.app.look_up_from_db', return_value=result_df)
     runner = CliRunner()
@@ -98,7 +92,7 @@ def test_search_fail(mocker):
     assert result.output.split('\n')[1] == 'No matches found.'
 
 def test_search_no_match(mocker):
-    mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
+    mocker.patch('app.app.connect_db', autospec=True)
     result_df = pd.DataFrame()
     mocker.patch('app.app.look_up_from_db', return_value=result_df)
     runner = CliRunner()
@@ -109,7 +103,7 @@ def test_search_no_match(mocker):
     assert result.output.split('\n')[1] == 'No matches found.'
 
 def test_search_success(mocker):
-    mocker.patch('app.app.connect_db', autospec=True, return_value=MockConn())
+    mocker.patch('app.app.connect_db', autospec=True)
     result_df = pd.DataFrame({'firstname':['John','John'],
                               'lastname':['Smith','Smith'],
                               'email':['john.smith@gmail.com','j.smith@gmail.com']},

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from click.testing import CliRunner
 import pandas as pd
-import unittest.mock as mock
 import pytest
 
 from app import util
