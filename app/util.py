@@ -78,7 +78,6 @@ def read_file(file_name):
     return file.drop_duplicates(subset=['email']) #email need to be unique
 
 def load_file_to_db(file, engine, name="users"):
-    # TODO add table name
     """Load the given DataFame into the data base using the engine
     If table `users` does not exist, it will be created"""
 
