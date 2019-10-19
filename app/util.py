@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import subprocess
 import time
+import csv
 
 CONFIG = {
     'user': 'root',
@@ -56,16 +57,19 @@ def delete_db():
 def read_file(file_name):
     """Given the path of a file, it will be loaded and returned as DataFrame
     Duplicates of emails will be altomatically removed"""
-
-    header = ['firstname','lastname','email']
+    with open(file_name, "r") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+    if "email" not in header:
+        raise ValueError("No email column in input file")
     file = pd.read_csv(file_name,
-                       usecols=header,
-                       dtype={col: 'str' for col in header})[header]
+                       usecols=header,)
     ## TODO: imprement loading csv by chunk for really big file
     ## TODO: check inout format (e.g. email is a valid email)
     return file.drop_duplicates(subset=['email']) #email need to be unique
 
-def load_file_to_db(file, engine):
+def load_file_to_db(file, engine, name="users"):
+    # TODO add table name
     """Load the given DataFame into the data base using the engine
     If table `users` does not exist, it will be created"""
 

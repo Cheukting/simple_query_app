@@ -51,9 +51,10 @@ $ simple_query_app init
 
 To load a csv file:
 ```
-$ simple_query_app load <file_path>
+$ simple_query_app load --name <table_name> <file_path>
 ```
-while <file_path> is the path to your file including filename (e.g. example.csv)
+while <file_path> is the path to your file including filename (e.g. example.csv) and <table_name> is the name of the 
+table that you want to load the file into
 
 Here we use `email` as a unique key (assuming that it is unique amount users), duplicate records with same emails will not be loaded to the database twice.
 

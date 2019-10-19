@@ -14,7 +14,7 @@ def test_read_csv_fail():
         with pytest.raises(ValueError):
             result = util.read_file('fail_example.csv')
 
-def test_read_csv_too_less():
+def test_read_csv_no_email():
     runner = CliRunner()
     with runner.isolated_filesystem():
         with open('fail_example.csv', 'w') as f:
@@ -25,7 +25,7 @@ def test_read_csv_too_less():
         with pytest.raises(ValueError):
             result = util.read_file('fail_example.csv')
 
-def test_read_csv_too_much(mocker):
+def test_read_csv_extra_data(mocker):
     # should be success as it only use the 3 columns that we want
     mocker.patch('app.util.load_file_to_db', autospec=True)
     runner = CliRunner()
@@ -36,7 +36,21 @@ def test_read_csv_too_much(mocker):
                     'Ada,Wong,a.wong@gmail.com,28\n')
 
         result = util.read_file('example.csv')
-        assert result.shape == (2,3)
+        assert result.shape == (2,4)
+
+def test_read_csv_unexpected_column_name(mocker):
+    # should be success as it only use the 3 columns that we want
+    mocker.patch('app.util.load_file_to_db', autospec=True)
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        with open('example.csv', 'w') as f:
+            f.write('firstname,lastname,email,age\n'
+                    'John,Smith,john.smith@gmail.com,33\n'
+                    'Ada,Wong,a.wong@gmail.com,28\n')
+
+        result = util.read_file('example.csv')
+        assert "age" in result.columns
+
 
 def test_read_small_csv(mocker):
     mocker.patch('app.util.load_file_to_db', autospec=True)
