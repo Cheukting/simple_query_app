@@ -1,4 +1,4 @@
-,firstname,lastname,email
-0,John,Smith,john.smith@gmail.com
-1,Ada,Wong,a.wong@gmail.com
-2,John,Smith,j.smith@gmail.com
+,firstname,lastname,email,age
+0,John,Smith,john.smith@gmail.com,25
+1,Ada,Wong,a.wong@gmail.com,33
+2,John,Smith,j.smith@gmail.com,124

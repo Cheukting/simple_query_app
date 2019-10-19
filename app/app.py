@@ -37,8 +37,7 @@ def stop(delete):
 def load(file_name, name):
     """load data in a csv to database"""
     if name is None:
-        name = file_name[:-4]
-
+        name = os.path.splitext(os.path.basename(file_name))[0]
     click.echo('Loading data into database...')
     try:
         file = read_file(file_name)
@@ -47,7 +46,11 @@ def load(file_name, name):
         return None
     engine = connect_db()
     if 'users' in engine.table_names():
-        click.confirm(f"Table with name '{name}' already exists, overwrite? (y/n) ", abort=True)
+        if click.confirm(f"Table with name '{name}' already exists, overwrite?"):
+            connection = engine.connect()
+            connection.execute(f"DROP TABLE {name}")
+            connection.close()
+
     not_loaded = load_file_to_db(file, engine, name=name)
     if len(not_loaded) == 0:
         click.echo(f'{file.shape[0]} row(s) of data loaded.')

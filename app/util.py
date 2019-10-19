@@ -1,5 +1,6 @@
 #import mysql.connector
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 import pandas as pd
 import os
 import subprocess
@@ -69,6 +70,7 @@ def read_file(file_name):
         header = next(reader)
     if "email" not in header:
         raise ValueError("No email column in input file")
+    header.remove("")
     file = pd.read_csv(file_name,
                        usecols=header,)
     ## TODO: imprement loading csv by chunk for really big file
@@ -83,17 +85,17 @@ def load_file_to_db(file, engine, name="users"):
     tables = engine.table_names()
     connection = engine.connect()
     if name not in tables:
-        column_string = ", ".join([f"{col_name} {DTYPE_MAP[str(dtype)]}" for col_name, dtype in file.dtype.items()])
-        connection.execute(f"CREATE TABLE {name} ({column_string}),"
+        column_string = ", ".join([f"{col_name} {DTYPE_MAP[str(dtype)]}" for col_name, dtype in file.dtypes.items()])
+        connection.execute(f"CREATE TABLE {name} ({column_string},"
                            "UNIQUE KEY unique_email (email))")
-    sql = f"INSERT INTO users ({', '.join([col_name for col_name in file.columns])}) " \
+    sql = f"INSERT INTO {name} ({', '.join([col_name for col_name in file.columns])}) " \
           f"VALUES ({', '.join(['%s' for col_name in file.columns])})"
     duplicate_idx = []
     for idx in range(file.shape[0]):
         row = file.iloc[idx]
         try:
-            connection.execute(sql, list(row))
-        except:
+            connection.execute(sql, [val.item() if not isinstance(val, str) else val for val in row])
+        except IntegrityError:
             duplicate_idx.append(idx)
     connection.close()
     return duplicate_idx
