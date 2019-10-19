@@ -14,6 +14,13 @@ CONFIG = {
     'database': 'production'
 }
 
+DTYPE_MAP = {
+    "float64": "FLOAT",
+    "int64": "INT",
+    "datetime64[ns]": "DATETIME",
+    "object": "VARCHAR(255)",
+}
+
 COMPOSE_PATH = os.path.dirname(__file__) #the folder containing docker-compose.yml
 
 def connect_db():
@@ -75,15 +82,17 @@ def load_file_to_db(file, engine, name="users"):
 
     tables = engine.table_names()
     connection = engine.connect()
-    if 'users' not in tables:
-        connection.execute("CREATE TABLE users (firstname VARCHAR(255), lastname VARCHAR(255), email VARCHAR(225),"
+    if name not in tables:
+        column_string = ", ".join([f"{col_name} {DTYPE_MAP[str(dtype)]}" for col_name, dtype in file.dtype.items()])
+        connection.execute(f"CREATE TABLE {name} ({column_string}),"
                            "UNIQUE KEY unique_email (email))")
-    sql = "INSERT INTO users (firstname, lastname, email) VALUES (%s, %s, %s)"
+    sql = f"INSERT INTO users ({', '.join([col_name for col_name in file.columns])}) " \
+          f"VALUES ({', '.join(['%s' for col_name in file.columns])})"
     duplicate_idx = []
     for idx in range(file.shape[0]):
         row = file.iloc[idx]
         try:
-            connection.execute(sql, [row.firstname, row.lastname, row.email])
+            connection.execute(sql, list(row))
         except:
             duplicate_idx.append(idx)
     connection.close()

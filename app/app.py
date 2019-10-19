@@ -33,17 +33,22 @@ def stop(delete):
 
 @cli.command()
 @click.argument('file_name')
-def load(file_name):
+@click.option('--name', type=str, help="Name of output table")
+def load(file_name, name):
     """load data in a csv to database"""
+    if name is None:
+        name = file_name[:-4]
 
     click.echo('Loading data into database...')
     try:
         file = read_file(file_name)
-    except:
-        click.echo('Abort. Incorrect file format.')
+    except Exception as e:
+        click.echo(f'Abort. Incorrect file format. {str(e)}')
         return None
     engine = connect_db()
-    not_loaded = load_file_to_db(file, engine)
+    if 'users' in engine.table_names():
+        click.confirm(f"Table with name '{name}' already exists, overwrite? (y/n) ", abort=True)
+    not_loaded = load_file_to_db(file, engine, name=name)
     if len(not_loaded) == 0:
         click.echo(f'{file.shape[0]} row(s) of data loaded.')
     else:
