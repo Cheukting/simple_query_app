@@ -65,21 +65,16 @@ def delete_db():
 def read_file(file_name):
     """Given the path of a file, it will be loaded and returned as DataFrame
     Duplicates of emails will be altomatically removed"""
-    with open(file_name, "r") as f:
-        reader = csv.reader(f)
-        header = next(reader)
-    if "email" not in header:
+    file = pd.read_csv(file_name)
+    if "email" not in file.columns:
         raise ValueError("No email column in input file")
-    header.remove("")
-    file = pd.read_csv(file_name,
-                       usecols=header,)
     ## TODO: imprement loading csv by chunk for really big file
     ## TODO: check inout format (e.g. email is a valid email)
     return file.drop_duplicates(subset=['email']) #email need to be unique
 
 def load_file_to_db(file, engine, name="users"):
     """Load the given DataFame into the data base using the engine
-    If table `users` does not exist, it will be created"""
+    If table `name` does not exist, it will be created"""
 
     tables = engine.table_names()
     connection = engine.connect()
@@ -99,12 +94,12 @@ def load_file_to_db(file, engine, name="users"):
     connection.close()
     return duplicate_idx
 
-def look_up_from_db(item, value, engine):
+def look_up_from_db(item, value, engine, table):
     """Query and return the data matching the given `value` in the `item` field
     using the engine. Return as a DataFrame"""
     try:
-        query = f"SELECT * FROM users WHERE {item} = '{value}'"
+        query = f"SELECT * FROM {table} WHERE {item} = '{value}'"
         df = pd.read_sql(query, con=engine)
-        return df[['firstname','lastname','email']]
+        return df
     except:
         return None

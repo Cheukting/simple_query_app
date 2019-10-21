@@ -45,7 +45,7 @@ def load(file_name, name):
         click.echo(f'Abort. Incorrect file format. {str(e)}')
         return None
     engine = connect_db()
-    if 'users' in engine.table_names():
+    if name in engine.table_names():
         if click.confirm(f"Table with name '{name}' already exists, overwrite?"):
             connection = engine.connect()
             connection.execute(f"DROP TABLE {name}")
@@ -60,14 +60,15 @@ def load(file_name, name):
         click.echo(f'{file.shape[0]-len(not_loaded)} row(s) of data loaded.')
 
 @cli.command()
+@click.argument('table')
 @click.argument('key')
 @click.argument('value')
-def search(key,value):
+def search(table, key,value):
     """search for records with `value` for `key`"""
 
-    click.echo(f"Searching for user with '{key}' as '{value}'...")
+    click.echo(f"Searching for element in '{table}' with '{key}' as '{value}'...")
     engine = connect_db()
-    result = look_up_from_db(key, value, engine)
+    result = look_up_from_db(key, value, engine, table)
     if result is None or result.shape[0] == 0:
         click.echo('No matches found.')
     else:
