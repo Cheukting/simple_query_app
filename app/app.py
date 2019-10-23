@@ -33,17 +33,25 @@ def stop(delete):
 
 @cli.command()
 @click.argument('file_name')
-def load(file_name):
+@click.option('--name', type=str, help="Name of output table")
+def load(file_name, name):
     """load data in a csv to database"""
-
+    if name is None:
+        name = os.path.splitext(os.path.basename(file_name))[0]
     click.echo('Loading data into database...')
     try:
         file = read_file(file_name)
-    except:
-        click.echo('Abort. Incorrect file format.')
+    except Exception as e:
+        click.echo(f'Abort. Incorrect file format. {str(e)}')
         return None
     engine = connect_db()
-    not_loaded = load_file_to_db(file, engine)
+    if name in engine.table_names():
+        if click.confirm(f"Table with name '{name}' already exists, overwrite?"):
+            connection = engine.connect()
+            connection.execute(f"DROP TABLE {name}")
+            connection.close()
+
+    not_loaded = load_file_to_db(file, engine, name=name)
     if len(not_loaded) == 0:
         click.echo(f'{file.shape[0]} row(s) of data loaded.')
     else:
@@ -52,14 +60,15 @@ def load(file_name):
         click.echo(f'{file.shape[0]-len(not_loaded)} row(s) of data loaded.')
 
 @cli.command()
+@click.argument('table')
 @click.argument('key')
 @click.argument('value')
-def search(key,value):
+def search(table, key,value):
     """search for records with `value` for `key`"""
 
-    click.echo(f"Searching for user with '{key}' as '{value}'...")
+    click.echo(f"Searching for element in '{table}' with '{key}' as '{value}'...")
     engine = connect_db()
-    result = look_up_from_db(key, value, engine)
+    result = look_up_from_db(key, value, engine, table)
     if result is None or result.shape[0] == 0:
         click.echo('No matches found.')
     else:
